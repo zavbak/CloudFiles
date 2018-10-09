@@ -39,7 +39,7 @@ public class ServerNetty implements Network {
 
 
     @Override
-    public Completable start() {
+    public Completable connect() {
 
         return Completable.fromAction(() -> {
             EventLoopGroup mainGroup = new NioEventLoopGroup();
@@ -63,7 +63,7 @@ public class ServerNetty implements Network {
                     });
 
             // connect
-            System.out.println("Server start!");
+            System.out.println("Server connect!");
             ChannelFuture f = b.bind().sync();
 
             // close

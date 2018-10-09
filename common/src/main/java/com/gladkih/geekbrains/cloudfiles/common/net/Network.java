@@ -5,7 +5,7 @@ import io.reactivex.Completable;
 import java.io.Serializable;
 
 public interface Network {
-     Completable start();
+     Completable connect();
      Completable send(Serializable o);
      Completable close();
 }

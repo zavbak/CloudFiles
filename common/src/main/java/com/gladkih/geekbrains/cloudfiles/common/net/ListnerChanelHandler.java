@@ -4,5 +4,5 @@ import java.io.Serializable;
 
 public interface ListnerChanelHandler {
     Serializable onReceive(Serializable o);
-    void exceptionNet(Throwable throwable);
+    void onExeption(Throwable throwable);
 }

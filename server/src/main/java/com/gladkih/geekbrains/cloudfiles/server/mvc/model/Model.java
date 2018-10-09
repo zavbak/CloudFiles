@@ -1,14 +1,13 @@
 package com.gladkih.geekbrains.cloudfiles.server.mvc.model;
 
-import com.gladkih.geekbrains.cloudfiles.common.command.AbsCommand;
-import com.gladkih.geekbrains.cloudfiles.common.command.AuthCommRes;
+
 import com.gladkih.geekbrains.cloudfiles.common.command.ErrorCommRes;
 import com.gladkih.geekbrains.cloudfiles.common.net.ListnerChanelHandler;
 import com.gladkih.geekbrains.cloudfiles.common.net.Network;
 import com.gladkih.geekbrains.cloudfiles.server.db.DBHelper;
 import com.gladkih.geekbrains.cloudfiles.server.mvc.model.prosses.RouterCommand;
 import io.reactivex.Completable;
-import io.reactivex.Single;
+
 
 import java.io.Serializable;
 import java.sql.SQLException;
@@ -29,21 +28,17 @@ public class Model implements ListnerChanelHandler {
 
     @Override
     public Serializable onReceive(Serializable o) {
-        return (Serializable) routCommand.action(o)
-                .onErrorReturn(throwable -> {
-                    return new ErrorCommRes(throwable.toString());
-                })
-                .blockingGet();
+        return (Serializable) routCommand.action(o);
+    }
+    @Override
+    public void onExeption(Throwable throwable) {
+        throwable.printStackTrace();
     }
 
     public DBHelper getDbHelper() {
         return dbHelper;
     }
 
-    @Override
-    public void exceptionNet(Throwable throwable) {
-
-    }
 
     public User getUser() {
         return user;

@@ -13,11 +13,11 @@ public class StartServer {
         try {
             network = new ServerNetty(8189);
 
-            network.start()
+            network.connect()
                     .subscribe(() -> {
                         System.out.println("Server is work!");
                     },throwable -> {
-                        System.out.println("Error start!");
+                        System.out.println("Error connect!");
                         throwable.printStackTrace();
                     });
 

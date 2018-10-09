@@ -4,7 +4,6 @@ package com.gladkih.geekbrains.cloudfiles.client.mvc.model;
 import com.gladkih.geekbrains.cloudfiles.client.mvc.controller.Controller;
 import com.gladkih.geekbrains.cloudfiles.client.net.ClientNetty;
 
-import com.gladkih.geekbrains.cloudfiles.common.command.AuthCommReq;
 import com.gladkih.geekbrains.cloudfiles.common.net.ListnerChanelHandler;
 import com.gladkih.geekbrains.cloudfiles.common.net.Network;
 
@@ -13,64 +12,71 @@ import io.reactivex.Completable;
 
 import java.io.Serializable;
 
-public class Model implements ListnerChanelHandler {
+public class Model  {
 
-    private final Network network;
     private final Controller controller;
-    private EnumState state;
+    private final HandlerModelCommand handlerCommand;
 
-    /**
-     *
-     * @param controller
-     */
+
+    private boolean isConnect  = false;
+    private boolean isAccessed = false;
+
+
     public Model(Controller controller) {
         this.controller = controller;
-        this.network = new ClientNetty(controller, getHost(), getPort());
-        this.state = EnumState.disconnect;
-
+        this.handlerCommand = new HandlerModelCommand(this);
     }
 
-    private String getHost() {
-        return "localhost";
+    public void start(){
+        handlerCommand.start();
     }
 
-    private int getPort() {
-        return 8189;
+    public void showMessage(String mess){
+        controller.showMessage(mess);
     }
 
-    private AuthCommReq getAuthComm() {
-        return new AuthCommReq("test1", "password".hashCode());
+    public void sendString(String str) {
+        handlerCommand.sendString(str);
     }
 
-    @Override
-    public Serializable onReceive(Serializable o) {
-        controller.showMessage(o);
-        return null;
+    public void connect() {
+        handlerCommand.connect();
     }
 
-    @Override
-    public void exceptionNet(Throwable throwable) {
-        state = EnumState.disconnect;
+    public void desconnect() {
+        handlerCommand.disconnect();
     }
 
-    public Completable sendMessage(Serializable serializable) {
-        return network.send(serializable);
+    public void authorization(String login, String pass) {
+        handlerCommand.authorization(login,pass);
     }
 
-    public Completable startNetClient() {
-        return network.start();
+    public void getInfoFiles() {
+        handlerCommand.getInfoFiles();
     }
 
-    public Completable desconnect() {
-        return network.close();
+    public void sendFile(String file) {
+       handlerCommand.sendFile(file);
     }
 
-    public Completable sendAuth() {
-        return network.send(getAuthComm())
-                .doOnComplete(() -> {
-                    state = EnumState.waitingAuth;
-                });
+
+   //************************************************************
+    public boolean isConnect() {
+        return isConnect;
     }
+
+    public void setConnect(boolean connect) {
+        isConnect = connect;
+    }
+
+    public boolean isAccessed() {
+        return isAccessed;
+    }
+
+    public void setAccessed(boolean accessed) {
+        isAccessed = accessed;
+    }
+
 
 
 }

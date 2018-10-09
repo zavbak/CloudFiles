@@ -2,6 +2,7 @@ package com.gladkih.geekbrains.cloudfiles.client.net;
 
 import com.gladkih.geekbrains.cloudfiles.client.mvc.controller.Controller;
 import com.gladkih.geekbrains.cloudfiles.common.net.InChanelHandler;
+import com.gladkih.geekbrains.cloudfiles.common.net.ListnerChanelHandler;
 import com.gladkih.geekbrains.cloudfiles.common.net.Network;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -24,16 +25,16 @@ public class ClientNetty implements Network {
     private String host;
     private int port;
 
-    Controller controller;
+    ListnerChanelHandler listnerChanelHandler;
 
-    public ClientNetty(Controller controller, String host, int port) {
+    public ClientNetty(ListnerChanelHandler listnerChanelHandler, String host, int port) {
         this.host = host;
         this.port = port;
-        this.controller = controller;
+        this.listnerChanelHandler = listnerChanelHandler;
     }
 
     @Override
-    public Completable start() {
+    public Completable connect() {
 
         return Completable.fromAction(() -> {
 
@@ -54,7 +55,7 @@ public class ClientNetty implements Network {
                     ch.pipeline().addLast(
                             new ObjectDecoder(MAX_OBJ_SIZE, ClassResolvers.cacheDisabled(null)),
                             new ObjectEncoder(),
-                            new InChanelHandler(controller)
+                            new InChanelHandler(listnerChanelHandler)
                     );
                 }
             });

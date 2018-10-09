@@ -8,7 +8,7 @@ import io.reactivex.Completable;
 
 import java.io.Serializable;
 
-public class Controller implements ListnerChanelHandler {
+public class Controller {
 
     Model model;
     View view;
@@ -18,33 +18,31 @@ public class Controller implements ListnerChanelHandler {
         this.view = view;
     }
 
-    @Override
-    public Serializable onReceive(Serializable o) {
-       return model.onReceive(o);
+    public void sendString(String str){
+        model.sendString(str);
     }
 
-    @Override
-    public void exceptionNet(Throwable cause) {
-        model.exceptionNet(cause);
+    public void connect(){
+        model.connect();
     }
 
-    public Completable sendMessage(Serializable serializable){
-        return model.sendMessage(serializable);
+    public void disconect(){
+        model.desconnect();
     }
 
-    public Completable connect(){
-        return model.startNetClient();
+    public void authorization(String login, String pass){
+       model.authorization(login,pass);
     }
 
-    public Completable disconect(){
-        return model.desconnect();
+    public void showMessage(String mess) {
+        view.showMessage(mess);
     }
 
-    public Completable sendAuth(){
-       return model.sendAuth();
+    public void getInfoFiles() {
+        model.getInfoFiles();
     }
 
-    public void showMessage(Serializable o) {
-        view.showMessage(o.toString());
+    public void sendFile(String file) {
+        model.sendFile(file);
     }
 }

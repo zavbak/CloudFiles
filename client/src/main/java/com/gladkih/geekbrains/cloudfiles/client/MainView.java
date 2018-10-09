@@ -9,7 +9,6 @@ import javafx.stage.Stage;
 
 public class MainView extends Application {
 
-
     @Override
     public void init() throws Exception {
         super.init();

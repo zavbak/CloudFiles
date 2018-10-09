@@ -23,8 +23,8 @@ public class Controller implements ListnerChanelHandler {
     }
 
     @Override
-    public void exceptionNet(Throwable throwable) {
-        model.exceptionNet(throwable);
+    public void onExeption(Throwable throwable) {
+        model.onExeption(throwable);
     }
 
     public Completable sendMessaga(Serializable serializable){

@@ -14,34 +14,29 @@ public class FileHelper {
     /**
      * Возвращает страницу байт фйла с первой
      *
-     * @param page    - страница
      * @param lenPage -длинна страницы
      * @param file    - путь
      * @return
      * @throws IOException
      */
-    public static byte[] getPartFile(long page, int lenPage, String file) throws IOException {
+    public static byte[] getPartFile(String file,long seek, int lenPage) throws IOException {
         byte[] data;
         try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
 
-
-            long seek = (page - 1) * lenPage;
-            long lenFile = raf.length();
-
-            long countBuff = 0;
-
-            if (seek + lenPage + 1 > lenFile) {
-                countBuff = lenFile - seek;
-            } else {
-                countBuff = lenPage;
-            }
-
-            data = new byte[(int) countBuff];
+            data = new byte[(int) lenPage];
             raf.seek(seek);
             raf.read(data);
         }
         return data;
     }
+
+    public static long getLenthFile(String file) throws IOException {
+        try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
+           return raf.length();
+        }
+    }
+
+
 
     public static void saveFile(String file, byte[] data, long seek) throws IOException {
         try (RandomAccessFile raf = new RandomAccessFile(file, "rw")) {

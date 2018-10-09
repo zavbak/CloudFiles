@@ -10,34 +10,44 @@ import io.reactivex.Flowable;
 import io.reactivex.Single;
 import io.reactivex.exceptions.Exceptions;
 
+import java.io.Serializable;
+import java.sql.SQLException;
+
 
 public class AuthProsses {
 
-    public static Single response(Model model, AuthCommReq authCommand) {
-        return Single.just(authCommand)
-                .map(authCommReq -> {
+    public static Serializable response(Model model, AuthCommReq authCommand) throws SQLException {
 
-                    if (authCommand.getLogin() == null || authCommand.getLogin().length() < 5) {
-                        throw Exceptions.propagate(new Throwable("Не верный Логин"));
-                    } else if (authCommand.getPassHashCode() == 0) {
-                        throw Exceptions.propagate(new Throwable("Пустой пароль!"));
-                    }
+        model.setUser(null);
 
-                    User user = model.getDbHelper().getUser(authCommand.getLogin());
+        if (authCommand.getLogin() == null ||
+                authCommand.getLogin().length() < 5) {
 
-                    if (user == null) {
-                        model.getDbHelper().addUser(new User(authCommand.getLogin(),
-                                authCommand.getPassHashCode()));
-                    }else if (user.getPassHashCode() != authCommand.getPassHashCode()){
-                        throw Exceptions.propagate(new Throwable("Неверный пароль!"));
-                    }
+            return new AuthCommRes(null, true, "Ошибка длинны логина");
 
-                    return user;
+        } else if (authCommand.getPassHashCode() == 0) {
 
-                }).map(user -> {
-                    model.setUser((User) user);
-                    return new AuthCommRes(model.getUser().getLogin());
-                });
+            return new AuthCommRes(null, true, "Пустой пароль!");
+
+        }
+
+        User user = null;
+
+        user = model.getDbHelper().getUser(authCommand.getLogin());
+
+        if (user == null) {
+            model.getDbHelper().addUser(new User(authCommand.getLogin(), authCommand.getPassHashCode()));
+            user = model.getDbHelper().getUser(authCommand.getLogin());
+
+
+        } else if (user.getPassHashCode() != authCommand.getPassHashCode()) {
+
+            return new AuthCommRes(null, true, "Неверный пароль!");
+
+        }
+
+        model.setUser(user);
+        return new AuthCommRes(model.getUser().getLogin(), false, null);
 
     }
 }

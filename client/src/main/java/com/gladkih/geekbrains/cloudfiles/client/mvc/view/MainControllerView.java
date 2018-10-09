@@ -2,8 +2,6 @@ package com.gladkih.geekbrains.cloudfiles.client.mvc.view;
 
 
 import com.gladkih.geekbrains.cloudfiles.client.mvc.controller.Controller;
-import io.reactivex.Completable;
-import io.reactivex.Flowable;
 import io.reactivex.schedulers.Schedulers;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -21,6 +19,16 @@ public class MainControllerView implements View {
     @FXML
     TextArea textArea;
 
+
+    @FXML
+    TextField loginField;
+
+    @FXML
+    TextField passField;
+
+    @FXML
+    TextField fileField;
+
     Controller controller;
 
 
@@ -30,41 +38,18 @@ public class MainControllerView implements View {
 
 
     public void connect() {
-        controller.connect()
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.single())
-                .subscribe(() -> {
-                    System.out.println("Connect");
-                }, throwable -> {
-                    System.out.println("Error");
-                    throwable.printStackTrace();
-                });
+        controller.connect();
     }
 
 
     public void disconnect() {
-        controller.disconect()
-                .subscribe(() -> {
-                    System.out.println("Close");
-                }, throwable -> {
-                    System.out.println("Error");
-                    throwable.printStackTrace();
-                });
+        controller.disconect();
     }
 
 
     public void btnClickMeReaction() {
-        controller.sendMessage(textField.getText())
-                .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.single())
-                .subscribe(() -> {
-                    System.out.println("Send");
-                }, throwable -> {
-                    System.out.println("Error");
-                    throwable.printStackTrace();
-                });
+        controller.sendString(textField.getText());
 
-        showMessage(textField.getText() + '\n');
         textField.clear();
         textField.requestFocus();
     }
@@ -92,10 +77,14 @@ public class MainControllerView implements View {
     }
 
     public void btnClickAuth(ActionEvent actionEvent) {
-        controller.sendAuth()
-                .subscribe(() -> {
-                }, throwable -> {
-                    throwable.printStackTrace();
-                });
+        controller.authorization(loginField.getText(),passField.getText());
+    }
+
+    public void btnClickGetInfo(ActionEvent actionEvent) {
+        controller.getInfoFiles();
+    }
+
+    public void btnSendFile(ActionEvent actionEvent) {
+        controller.sendFile(fileField.getText());
     }
 }

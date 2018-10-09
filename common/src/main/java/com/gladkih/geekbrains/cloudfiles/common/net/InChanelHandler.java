@@ -46,6 +46,6 @@ public class InChanelHandler extends ChannelInboundHandlerAdapter { //(1)
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable throwable) throws Exception {
         throwable.printStackTrace();
         ctx.close();
-        listnerChanelHandler.exceptionNet(throwable);
+        listnerChanelHandler.onExeption(throwable);
     }
 }
