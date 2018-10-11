@@ -2,7 +2,7 @@ package com.gladkih.geekbrains.cloudfiles.client.mvc.model;
 
 public class Config {
 
-    private final int LEN_PAGE_BUTE = 1024;
+    private final int LEN_PAGE_BUTE = 3;
 
     public String getHost(){
        return "localhost";

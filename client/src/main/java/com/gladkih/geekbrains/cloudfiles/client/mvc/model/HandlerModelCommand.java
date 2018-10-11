@@ -5,6 +5,7 @@ import com.gladkih.geekbrains.cloudfiles.common.command.AuthCommReq;
 import com.gladkih.geekbrains.cloudfiles.common.command.GetInfoFilesReq;
 import com.gladkih.geekbrains.cloudfiles.common.command.SendFileCommReq;
 import com.gladkih.geekbrains.cloudfiles.common.helpers.FileHelper;
+import com.gladkih.geekbrains.cloudfiles.common.helpers.HelperSendFiles;
 import com.gladkih.geekbrains.cloudfiles.common.net.ListnerChanelHandler;
 import com.gladkih.geekbrains.cloudfiles.common.net.Network;
 import io.reactivex.Completable;
@@ -12,7 +13,9 @@ import io.reactivex.Completable;
 import java.io.File;
 import java.io.IOException;
 import java.io.Serializable;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class HandlerModelCommand implements ListnerChanelHandler {
 
@@ -20,53 +23,49 @@ public class HandlerModelCommand implements ListnerChanelHandler {
     Config config;
     Network network;
 
+    HelperSendFiles helperSendFiles;
+
+
     public HandlerModelCommand(Model model) {
         this.model = model;
         this.config = new Config();
         this.network = new ClientNetty(this, config.getHost(), config.getPort());
+        this.helperSendFiles = HelperSendFiles.getInstance();
     }
 
     public void sendFile(String file) {
 
-        String fileName = new File(file).getName();
+        Path path = Paths.get(file);
 
-        int pageSize = config.getLenPage();
-        long amountPart = 0;
-
-
-        long sendbyte = 0;
-        long part = 0;
-        long seek = 0;
+        if (!Files.exists(path)) {
+            model.showMessage("Не нашел файл!");
+        }
 
         try {
-            long lenth = FileHelper.getLenthFile(file);
-            amountPart = lenth / pageSize;
-            if (lenth % pageSize != 0) {
-                amountPart++;
-            }
-
-            while (sendbyte != lenth) {
-                int size = 0;
-
-                if (seek + pageSize <= lenth) {
-                    size = pageSize;
-                } else {
-                    size = (int) (lenth - seek);
-                }
-
-                byte[] data = FileHelper.getPartFile(file, seek, size);
-                System.out.println(new String(data) + " part " + part + " size byte " + size);
-
-                sendMessage(new SendFileCommReq(fileName,data,seek,part))
-                        .subscribe();
-
-                model.showMessage("Отправили часть " + part +1);
-
-                seek += size;
-                sendbyte+= size;
-                part++;
+            long size = Files.size(path);
+            if (size == 0) {
+                model.showMessage("Пустой файл!");
             }
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        try {
+            helperSendFiles.sendFile(
+                    path,
+                    sendFileCommReq -> {
+                        sendMessage(sendFileCommReq)
+                                .subscribe(() -> {
+                                    model.showMessage("Отправили часть: " + sendFileCommReq.getPart() + " файла" + sendFileCommReq.getFileName());
+                                }, throwable -> {
+                                    model.showMessage("Ошибка отправки части!");
+                                    throwable.printStackTrace();
+                                });
+                    },
+                    3);
+        } catch (IOException e) {
+            model.showMessage("Ошибка отправки файла!");
             e.printStackTrace();
         }
     }

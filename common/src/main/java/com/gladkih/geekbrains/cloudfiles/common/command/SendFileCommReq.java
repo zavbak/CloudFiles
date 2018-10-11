@@ -6,14 +6,15 @@ public class SendFileCommReq extends AbsCommand {
     String fileName;
     byte[] data;
     long seek;
-    long part;
+    int part;
+    int hasCode;
 
-
-    public SendFileCommReq(String fileName, byte[] data, long seek, long part) {
+    public SendFileCommReq(String fileName, byte[] data, long seek, int part,int hasCode) {
         this.fileName = fileName;
         this.data = data;
         this.seek = seek;
         this.part = part;
+        this.hasCode = hasCode;
     }
 
     public String getFileName() {
@@ -28,17 +29,11 @@ public class SendFileCommReq extends AbsCommand {
         return seek;
     }
 
-    public long getPart() {
+    public int getPart() {
         return part;
     }
 
-    @Override
-    public String toString() {
-        return "SendFileCommReq{" +
-                "fileName='" + fileName + '\'' +
-                ", data=" + Arrays.toString(data) +
-                ", seek=" + seek +
-                ", part=" + part +
-                '}';
+    public int getHasCode() {
+        return hasCode;
     }
 }

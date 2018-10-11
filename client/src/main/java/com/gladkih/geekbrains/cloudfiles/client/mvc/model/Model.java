@@ -21,6 +21,8 @@ public class Model  {
     private boolean isConnect  = false;
     private boolean isAccessed = false;
 
+    private boolean isSendFile = false;
+
 
     public Model(Controller controller) {
         this.controller = controller;
@@ -57,8 +59,8 @@ public class Model  {
 
     public void sendFile(String file) {
        handlerCommand.sendFile(file);
+       isSendFile = true;
     }
-
 
    //************************************************************
     public boolean isConnect() {
@@ -77,6 +79,7 @@ public class Model  {
         isAccessed = accessed;
     }
 
-
-
+    public boolean isSendFile() {
+        return isSendFile;
+    }
 }

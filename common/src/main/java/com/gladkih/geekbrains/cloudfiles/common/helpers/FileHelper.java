@@ -19,9 +19,9 @@ public class FileHelper {
      * @return
      * @throws IOException
      */
-    public static byte[] getPartFile(String file,long seek, int lenPage) throws IOException {
+    public static byte[] getPartFile(Path file,long seek, int lenPage) throws IOException {
         byte[] data;
-        try (RandomAccessFile raf = new RandomAccessFile(file, "r")) {
+        try (RandomAccessFile raf = new RandomAccessFile(file.toString(), "r")) {
 
             data = new byte[(int) lenPage];
             raf.seek(seek);
